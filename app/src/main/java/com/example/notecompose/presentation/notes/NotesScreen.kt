@@ -154,7 +154,7 @@ fun NotesScreen(
             
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Horizontal Category List
+            // Horizontal Category
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 LazyRow(
                     state = categoryListState,
