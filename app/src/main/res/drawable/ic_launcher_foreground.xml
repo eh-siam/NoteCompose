@@ -1,0 +1,30 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Outer Card / Paper -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,25 h40 l15,15 v45 q0,5 -5,5 h-50 q-5,0 -5,-5 v-55 q0,-5 5,-5 z" />
+
+    <!-- Folded Corner Shadow -->
+    <path
+        android:fillColor="#000000"
+        android:fillAlpha="0.1"
+        android:pathData="M70,25 l15,15 h-10 q-5,0 -5,-5 z" />
+
+    <!-- Lines on the paper -->
+    <path
+        android:strokeColor="#6200EE"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M40,45 h25 M40,55 h30 M40,65 h30" />
+
+    <!-- A small pencil or checkmark -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M75,70 l5,5 l15,-15 l-3,-3 l-12,12 z" />
+
+</vector>
