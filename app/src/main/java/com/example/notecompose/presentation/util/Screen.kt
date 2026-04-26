@@ -10,7 +10,10 @@ sealed class Screen(val route: String, val label: String? = null, val icon: Imag
     object SplashScreen: Screen("splash_screen")
     object HomeScreen: Screen("home_screen", "Home", Icons.Default.Home)
     object NotesScreen: Screen("notes_screen", "Notes", Icons.AutoMirrored.Filled.Notes)
+    object AllNotesScreen: Screen("all_notes_screen")
     object BookmarksScreen: Screen("bookmarks_screen", "Bookmarks", Icons.Default.Bookmark)
+
+    object CompleteNotesScreen: Screen("complete_notes_screen")
 
     object AddEditNoteScreen: Screen("add_edit_note_screen")
     object LoginScreen: Screen("login_screen")

@@ -88,6 +88,13 @@ class NotesViewModel @Inject constructor(
                     )
                 }
             }
+            is NotesEvent.FinishNote -> {
+                viewModelScope.launch {
+                    noteUseCases.addNote(
+                        event.note.copy(category = "Complete")
+                    )
+                }
+            }
         }
     }
 

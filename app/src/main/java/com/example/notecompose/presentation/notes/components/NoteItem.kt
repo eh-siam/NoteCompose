@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
@@ -33,7 +34,8 @@ fun NoteItem(
     onDeleteClick: () -> Unit,
     onEditClick: () -> Unit = {},
     onBookmarkClick: () -> Unit = {},
-    onLockClick: () -> Unit = {}
+    onLockClick: () -> Unit = {},
+    onFinishedClick: () -> Unit = {}
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
 
@@ -42,6 +44,7 @@ fun NoteItem(
         "Birthday" -> Color(0xFFF48FB1)
         "Important" -> Color(0xFFFFAB91)
         "Occasions" -> Color(0xFFA5D6A7)
+        "Complete" -> Color(0xFF81C784)
         else -> MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
     }
 
@@ -165,6 +168,16 @@ fun NoteItem(
                                 ) 
                             }
                         )
+                        if (note.category == "Work") {
+                            DropdownMenuItem(
+                                text = { Text("Finished") },
+                                onClick = {
+                                    isMenuExpanded = false
+                                    onFinishedClick()
+                                },
+                                leadingIcon = { Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                            )
+                        }
                         HorizontalDivider()
                         DropdownMenuItem(
                             text = { Text("Delete", color = MaterialTheme.colorScheme.error) },

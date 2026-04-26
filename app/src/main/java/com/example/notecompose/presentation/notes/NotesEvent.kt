@@ -14,4 +14,5 @@ sealed class NotesEvent {
     object ToggleOrderSection: NotesEvent()
     data class ChangeCategory(val category: String): NotesEvent()
     data class ToggleBookmark(val note: Note): NotesEvent()
+    data class FinishNote(val note: Note): NotesEvent()
 }

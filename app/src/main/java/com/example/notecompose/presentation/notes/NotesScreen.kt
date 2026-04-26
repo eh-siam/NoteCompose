@@ -267,6 +267,9 @@ fun NotesScreen(
                             } else {
                                 navController.navigate(Screen.AddEditNoteScreen.route + "?noteId=${note.id}")
                             }
+                        },
+                        onFinishedClick = {
+                            viewModel.onEvent(NotesEvent.FinishNote(note))
                         }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
