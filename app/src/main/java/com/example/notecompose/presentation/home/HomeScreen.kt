@@ -35,23 +35,20 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.notecompose.domain.model.BannerItem
 import com.example.notecompose.presentation.util.BottomNavigationBar
 import com.example.notecompose.presentation.util.Screen
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
-
-data class BannerItem(
-    val title: String,
-    val subtitle: String,
-    val icon: ImageVector,
-    val gradient: List<Color>
-)
+import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,19 +90,22 @@ fun HomeScreen(navController: NavController) {
             title = "Organize Your Thoughts",
             subtitle = "Keep your ideas structured and never miss a detail.",
             icon = Icons.AutoMirrored.Filled.Notes,
-            gradient = listOf(Color(0xFFBBDEFB), Color(0xFF64B5F6))
+            gradient = listOf(Color(0xFFF0FDF4), Color(0xFFDCFCE7)),
+            textColor = Color(0xFF166534)
         ),
         BannerItem(
             title = "Secure Your Privacy",
             subtitle = "Keep sensitive notes safe with 4-digit PIN lock.",
             icon = Icons.Default.Lock,
-            gradient = listOf(Color(0xFFFFE0B2), Color(0xFFFFB74D))
+            gradient = listOf(Color(0xFFFFF7ED), Color(0xFFFFEDD5)),
+            textColor = Color(0xFF9A3412)
         ),
         BannerItem(
             title = "Quick Bookmarks",
             subtitle = "Save important notes for faster access anytime.",
             icon = Icons.Default.Star,
-            gradient = listOf(Color(0xFFC8E6C9), Color(0xFF81C784))
+            gradient = listOf(Color(0xFFF0F9FF), Color(0xFFE0F2FE)),
+            textColor = Color(0xFF075985)
         )
     )
     val pagerState = rememberPagerState(pageCount = { bannerItems.size })
@@ -113,7 +113,7 @@ fun HomeScreen(navController: NavController) {
     // Animation state for the cards
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        delay(300) // Longer delay to ensure layout is ready and animation is visible
+        delay(300)
         visible = true
     }
 
@@ -129,7 +129,7 @@ fun HomeScreen(navController: NavController) {
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+                            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.05f),
                             MaterialTheme.colorScheme.background
                         )
                     )
@@ -178,49 +178,80 @@ fun HomeScreen(navController: NavController) {
                     state = pagerState,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(150.dp)
-                        .clip(RoundedCornerShape(24.dp))
+                        .height(170.dp)
+                        .clip(RoundedCornerShape(28.dp)),
+                    pageSpacing = 16.dp
                 ) { page ->
+                    val pageOffset = (
+                            (pagerState.currentPage - page) + pagerState
+                                .currentPageOffsetFraction
+                            ).absoluteValue
+                    
                     val item = bannerItems[page]
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
+                            .graphicsLayer {
+                                val scale = 1f - (pageOffset * 0.12f)
+                                scaleX = scale
+                                scaleY = scale
+                                alpha = 1f - (pageOffset * 0.4f)
+                            }
                             .background(Brush.linearGradient(item.gradient))
                     ) {
+                        // Decorative elements
+                        Canvas(modifier = Modifier.fillMaxSize()) {
+                            drawCircle(
+                                color = item.textColor.copy(alpha = 0.03f),
+                                radius = size.width * 0.4f,
+                                center = Offset(size.width * 0.9f, size.height * 0.1f)
+                            )
+                            drawCircle(
+                                color = item.textColor.copy(alpha = 0.02f),
+                                radius = size.width * 0.2f,
+                                center = Offset(size.width * 0.1f, size.height * 0.9f)
+                            )
+                        }
+
                         Icon(
                             imageVector = item.icon,
                             contentDescription = null,
                             modifier = Modifier
-                                .size(120.dp)
+                                .size(140.dp)
                                 .align(Alignment.CenterEnd)
-                                .offset(x = 20.dp)
-                                .alpha(0.15f),
-                            tint = Color.White
+                                .offset(x = 25.dp, y = 10.dp)
+                                .alpha(0.06f),
+                            tint = item.textColor
                         )
                         
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(20.dp),
+                                .padding(24.dp),
                             verticalArrangement = Arrangement.Center
                         ) {
                             Text(
                                 text = item.title,
-                                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                                color = Color.DarkGray
+                                style = MaterialTheme.typography.titleLarge.copy(
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                color = item.textColor
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = item.subtitle,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.DarkGray.copy(alpha = 0.8f),
-                                modifier = Modifier.fillMaxWidth(0.7f)
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    lineHeight = 20.sp,
+                                    letterSpacing = 0.3.sp
+                                ),
+                                color = item.textColor.copy(alpha = 0.7f),
+                                modifier = Modifier.fillMaxWidth(0.65f)
                             )
                         }
                     }
                 }
                 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 
                 Row(
                     modifier = Modifier
@@ -229,77 +260,95 @@ fun HomeScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     repeat(pagerState.pageCount) { iteration ->
-                        val color = if (pagerState.currentPage == iteration) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
+                        val isSelected = pagerState.currentPage == iteration
+                        val width by animateDpAsState(
+                            targetValue = if (isSelected) 24.dp else 8.dp,
+                            animationSpec = spring(stiffness = Spring.StiffnessLow),
+                            label = "indicatorWidth"
+                        )
                         Box(
                             modifier = Modifier
-                                .padding(2.dp)
+                                .padding(horizontal = 4.dp)
                                 .clip(CircleShape)
-                                .background(color)
-                                .size(8.dp)
+                                .background(if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                                .size(width = width, height = 6.dp)
                         )
                     }
                 }
             }
 
-            Text(
-                text = "Quick Actions",
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
-            )
+            Spacer(modifier = Modifier.height(32.dp))
 
+            // Stats Section
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                StatCard(
+                    title = "Total Notes",
+                    value = "12",
+                    icon = Icons.Default.Folder,
+                    color = Color(0xFF64B5F6),
+                    modifier = Modifier.weight(1f),
+                    visible = visible
+                )
+                StatCard(
+                    title = "Tasks Done",
+                    value = "85%",
+                    icon = Icons.Default.CheckCircle,
+                    color = Color(0xFF81C784),
+                    modifier = Modifier.weight(1f),
+                    visible = visible
+                )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Recent Notes Header
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Quick Actions",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                TextButton(onClick = { navController.navigate(Screen.NotesScreen.route) }) {
+                    Text("View All")
+                    Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, modifier = Modifier.size(16.dp))
+                }
+            }
+
+            // Quick Actions Grid
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(16.dp),
+                contentPadding = PaddingValues(24.dp, 8.dp, 24.dp, 24.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.weight(1f)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 item {
-                    AnimatedHomeCard(
-                        visible = visible,
-                        delay = 0,
-                        title = "All Notes",
-                        subtitle = "Manage your ideas",
-                        icon = Icons.Filled.Folder,
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        iconColor = MaterialTheme.colorScheme.primary,
-                        onClick = { navController.navigate(Screen.AllNotesScreen.route) }
+                    ActionCard(
+                        title = "New Note",
+                        subtitle = "Write it down",
+                        icon = Icons.Default.EditNote,
+                        color = MaterialTheme.colorScheme.primary,
+                        onClick = { navController.navigate(Screen.AddEditNoteScreen.route) }
                     )
                 }
                 item {
-                    AnimatedHomeCard(
-                        visible = visible,
-                        delay = 150,
+                    ActionCard(
                         title = "Bookmarks",
-                        subtitle = "Saved for later",
+                        subtitle = "Important ones",
                         icon = Icons.Default.Bookmark,
-                        color = Color(0xFFFFE0B2),
-                        iconColor = Color(0xFFF57C00),
-                        onClick = { navController.navigate(Screen.BookmarksScreen.route) }
-                    )
-                }
-                item {
-                    AnimatedHomeCard(
-                        visible = visible,
-                        delay = 300,
-                        title = "Complete",
-                        subtitle = "Finished tasks",
-                        icon = Icons.Default.CheckCircle,
-                        color = Color(0xFFC8E6C9),
-                        iconColor = Color(0xFF388E3C),
-                        onClick = { navController.navigate(Screen.CompleteNotesScreen.route) }
-                    )
-                }
-                item {
-                    AnimatedHomeCard(
-                        visible = visible,
-                        delay = 450,
-                        title = "Drafts",
-                        subtitle = "Unfinished work",
-                        icon = Icons.Filled.EditNote,
-                        color = Color(0xFFBBDEFB),
-                        iconColor = Color(0xFF1976D2),
-                        onClick = { /* Drafts navigation logic here if needed */ }
+                        color = MaterialTheme.colorScheme.secondary,
+                        onClick = { /* Navigate to bookmarks */ }
                     )
                 }
             }
@@ -308,155 +357,100 @@ fun HomeScreen(navController: NavController) {
 }
 
 @Composable
-fun AnimatedHomeCard(
-    visible: Boolean,
-    delay: Int,
+fun StatCard(
     title: String,
-    subtitle: String,
+    value: String,
     icon: ImageVector,
     color: Color,
-    iconColor: Color,
-    onClick: () -> Unit
+    modifier: Modifier = Modifier,
+    visible: Boolean
 ) {
-    val entranceAlpha by animateFloatAsState(
-        targetValue = if (visible) 1f else 0f,
-        animationSpec = tween(durationMillis = 800, delayMillis = delay, easing = FastOutSlowInEasing),
-        label = "entranceAlpha"
-    )
-    val entranceScale by animateFloatAsState(
-        targetValue = if (visible) 1f else 0.85f,
-        animationSpec = tween(durationMillis = 800, delayMillis = delay, easing = FastOutSlowInEasing),
-        label = "entranceScale"
-    )
-    val entranceOffset by animateFloatAsState(
-        targetValue = if (visible) 0f else 50f,
-        animationSpec = tween(durationMillis = 800, delayMillis = delay, easing = FastOutSlowInEasing),
-        label = "entranceOffset"
-    )
-
-    Box(
-        modifier = Modifier
-            .graphicsLayer {
-                alpha = entranceAlpha
-                scaleX = entranceScale
-                scaleY = entranceScale
-                translationY = entranceOffset
-            }
+    AnimatedVisibility(
+        visible = visible,
+        enter = expandVertically() + fadeIn(),
+        modifier = modifier
     ) {
-        HomeCard(
-            title = title,
-            subtitle = subtitle,
-            icon = icon,
-            color = color,
-            iconColor = iconColor,
-            onClick = onClick
-        )
+        Card(
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(color.copy(alpha = 0.15f), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(20.dp))
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = value,
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
+                )
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
     }
 }
 
 @Composable
-fun HomeCard(
+fun ActionCard(
     title: String,
     subtitle: String,
     icon: ImageVector,
     color: Color,
-    iconColor: Color = Color.DarkGray,
     onClick: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
-    
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.94f else 1f,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-        label = "cardScale"
-    )
+    val scale by animateFloatAsState(if (isPressed) 0.96f else 1f, label = "scale")
 
     Card(
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .height(160.dp)
-            .scale(scale)
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick
-            ),
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            },
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = color),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isPressed) 1.dp else 4.dp
-        )
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        interactionSource = interactionSource
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                drawArc(
-                    color = Color.White.copy(alpha = 0.2f),
-                    startAngle = 0f,
-                    sweepAngle = 360f,
-                    useCenter = true,
-                    topLeft = Offset(size.width * 0.65f, -size.height * 0.15f),
-                    size = Size(size.width * 0.7f, size.width * 0.7f)
-                )
-                drawArc(
-                    color = Color.Black.copy(alpha = 0.03f),
-                    startAngle = 0f,
-                    sweepAngle = 360f,
-                    useCenter = true,
-                    topLeft = Offset(-size.width * 0.15f, size.height * 0.7f),
-                    size = Size(size.width * 0.4f, size.width * 0.4f)
-                )
-            }
-            
-            Column(
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(20.dp),
-                verticalArrangement = Arrangement.SpaceBetween
+                    .size(48.dp)
+                    .background(color.copy(alpha = 0.1f), RoundedCornerShape(14.dp)),
+                contentAlignment = Alignment.Center
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .background(Color.White.copy(alpha = 0.5f), shape = RoundedCornerShape(14.dp)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = icon,
-                            contentDescription = title,
-                            modifier = Modifier.size(24.dp),
-                            tint = iconColor
-                        )
-                    }
-                    
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp).alpha(0.4f),
-                        tint = Color.DarkGray
-                    )
-                }
-
-                Column {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.ExtraBold,
-                            letterSpacing = 0.2.sp
-                        ),
-                        color = Color.DarkGray
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = subtitle,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.DarkGray.copy(alpha = 0.6f)
-                    )
-                }
+                Icon(icon, contentDescription = null, tint = color)
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }

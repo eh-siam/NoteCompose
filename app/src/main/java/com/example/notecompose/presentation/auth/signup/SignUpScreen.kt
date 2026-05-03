@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.notecompose.presentation.model.SignUpEvent
 import com.example.notecompose.presentation.util.Screen
 import kotlinx.coroutines.flow.collectLatest
 
@@ -27,9 +28,7 @@ fun SignUpScreen(
     navController: NavController,
     viewModel: SignUpViewModel = hiltViewModel()
 ) {
-    val emailState = viewModel.email.value
-    val passwordState = viewModel.password.value
-    val isLoading = viewModel.isLoading.value
+    val state = viewModel.state.value
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = true) {
@@ -95,8 +94,8 @@ fun SignUpScreen(
                     Spacer(modifier = Modifier.height(32.dp))
                     
                     OutlinedTextField(
-                        value = emailState,
-                        onValueChange = { viewModel.onEmailChange(it) },
+                        value = state.email,
+                        onValueChange = { viewModel.onEvent(SignUpEvent.EnteredEmail(it)) },
                         label = { Text("Email") },
                         leadingIcon = { Icon(Icons.Default.Email, contentDescription = null) },
                         modifier = Modifier.fillMaxWidth(),
@@ -106,8 +105,8 @@ fun SignUpScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     OutlinedTextField(
-                        value = passwordState,
-                        onValueChange = { viewModel.onPasswordChange(it) },
+                        value = state.password,
+                        onValueChange = { viewModel.onEvent(SignUpEvent.EnteredPassword(it)) },
                         label = { Text("Password") },
                         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                         visualTransformation = PasswordVisualTransformation(),
@@ -118,14 +117,14 @@ fun SignUpScreen(
                     Spacer(modifier = Modifier.height(32.dp))
                     
                     Button(
-                        onClick = { viewModel.signUp() },
+                        onClick = { viewModel.onEvent(SignUpEvent.SignUp) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
                         shape = RoundedCornerShape(12.dp),
-                        enabled = !isLoading
+                        enabled = !state.isLoading
                     ) {
-                        if (isLoading) {
+                        if (state.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(24.dp),
                                 color = MaterialTheme.colorScheme.onPrimary,

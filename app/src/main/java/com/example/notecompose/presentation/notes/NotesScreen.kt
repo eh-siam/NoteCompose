@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.notecompose.domain.model.Note
+import com.example.notecompose.presentation.model.NotesEvent
 import com.example.notecompose.presentation.notes.components.NoteItem
 import com.example.notecompose.presentation.notes.components.OrderSection
 import com.example.notecompose.presentation.util.BottomNavigationBar

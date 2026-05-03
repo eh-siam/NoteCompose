@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.notecompose.domain.model.InvalidNoteException
 import com.example.notecompose.domain.model.Note
 import com.example.notecompose.domain.use_case.NoteUseCases
+import com.example.notecompose.presentation.model.AddEditNoteEvent
+import com.example.notecompose.presentation.model.AddEditNoteState
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
