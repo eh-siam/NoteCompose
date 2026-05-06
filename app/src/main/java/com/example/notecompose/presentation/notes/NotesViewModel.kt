@@ -9,6 +9,8 @@ import com.example.notecompose.domain.repository.NoteRepository
 import com.example.notecompose.domain.use_case.NoteUseCases
 import com.example.notecompose.domain.util.NoteOrder
 import com.example.notecompose.domain.util.OrderType
+import com.example.notecompose.presentation.model.NotesEvent
+import com.example.notecompose.presentation.model.NotesState
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job

@@ -19,12 +19,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.notecompose.domain.model.Note
-import com.example.notecompose.presentation.notes.NotesEvent
+import com.example.notecompose.presentation.model.NotesEvent
 import com.example.notecompose.presentation.notes.NotesViewModel
 import com.example.notecompose.presentation.notes.components.NoteItem
 import com.example.notecompose.presentation.util.BottomNavigationBar
 import com.example.notecompose.presentation.util.Screen
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,7 +88,15 @@ fun BookmarksScreen(
         },
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Bookmarked Notes", fontWeight = FontWeight.Bold) }
+                title = { Text("Bookmarked Notes", fontWeight = FontWeight.Bold) },
+            navigationIcon = {
+                IconButton(onClick = { navController.navigateUp() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                }
+            }
             )
         }
     ) { padding ->

@@ -13,12 +13,19 @@ import com.example.notecompose.presentation.notes.NotesScreen
 import com.example.notecompose.presentation.splash.SplashScreen
 import com.example.notecompose.presentation.home.HomeScreen
 import com.example.notecompose.presentation.bookmarks.BookmarksScreen
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun NavGraph(navController: NavHostController) {
+    val startDestination = if (FirebaseAuth.getInstance().currentUser != null) {
+        Screen.HomeScreen.route
+    } else {
+        Screen.LoginScreen.route
+    }
+
     NavHost(
         navController = navController,
-        startDestination = Screen.SplashScreen.route
+        startDestination = startDestination
     ) {
         composable(route = Screen.SplashScreen.route) {
             SplashScreen(navController = navController)
