@@ -245,7 +245,7 @@ fun BookmarksScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "No bookmarked notes yet",
+                        text = "No bookmarked notes yet.",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
